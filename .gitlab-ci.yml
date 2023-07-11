@@ -1,0 +1,12 @@
+stages:
+  - Dependencies
+Push zAppBuild:
+  stage: Dependencies
+  script:
+  - |
+    echo "Push zAppBuild project to USS"
+  tags:
+    - ZOS
+  only :
+    variables:
+      - $CI_PIPELINE_SOURCE == 'pipeline'
