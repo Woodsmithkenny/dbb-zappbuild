@@ -6,7 +6,7 @@ Push zAppBuild:
   - |
     echo "Push zAppBuild project to USS"
   tags:
-    - ZOS
+    - SD1H
   only :
     variables:
       - $CI_PIPELINE_SOURCE == 'pipeline'
