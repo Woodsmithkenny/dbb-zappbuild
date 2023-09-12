@@ -5,6 +5,8 @@ Push zAppBuild:
   script:
   - |
     echo "Push zAppBuild project to USS"
+    echo "sleeping for 60"
+    sleep 60
   tags:
     - SD1H
   only :
