@@ -1,6 +1,6 @@
 stages:
   - Dependencies
-variables:
+#variables:
   #CI_DEBUG_TRACE: "false"
 Push zAppBuild:
   stage: Dependencies
