@@ -94,6 +94,7 @@ def getFileSet(String dir, boolean relativePaths, String includeFileList, String
 def copySourceFiles(String buildFile, String srcPDS, String dependencyDatasetMapping, String dependenciesAlternativeLibraryNameMapping, SearchPathDependencyResolver dependencyResolver) {
 	// only copy the build file once
 	if (!copiedFileCache.contains(buildFile)) {
+		println "**** Copying $buildFile to $srcPDS"
 		copiedFileCache.add(buildFile)
 		new CopyToPDS().file(new File(getAbsolutePath(buildFile)))
 				.dataset(srcPDS)
@@ -137,6 +138,7 @@ def copySourceFiles(String buildFile, String srcPDS, String dependencyDatasetMap
 				// get index of last '.' in file path to extract the file extension
 				def extIndex = dependencyLoc.lastIndexOf('.')
 				if( zunitFileExtension && !zunitFileExtension.isEmpty() && (dependencyLoc.substring(extIndex).contains(zunitFileExtension))){
+					println "**** Copying $memberName to $dependencyPDS"
 					new CopyToPDS().file(new File(dependencyLoc))
 							.copyMode(CopyMode.BINARY)
 							.dataset(dependencyPDS)
@@ -145,6 +147,7 @@ def copySourceFiles(String buildFile, String srcPDS, String dependencyDatasetMap
 				}
 				else
 				{
+					println "**** Copying $memberName to $dependencyPDS"
 					new CopyToPDS().file(new File(dependencyLoc))
 							.dataset(dependencyPDS)
 							.member(memberName)
@@ -200,6 +203,7 @@ def copySourceFiles(String buildFile, String srcPDS, String dependencyDatasetMap
 						zunitFileExtension = (props.zunit_playbackFileExtension) ? props.zunit_playbackFileExtension : null
 
 						if( zunitFileExtension && !zunitFileExtension.isEmpty() && ((physicalDependency.getFile().substring(physicalDependency.getFile().indexOf("."))).contains(zunitFileExtension))){
+							println "**** Copying $memberName to $dependencyPDS"
 							new CopyToPDS().file(new File(physicalDependencyLoc))
 									.copyMode(CopyMode.BINARY)
 									.dataset(dependencyPDS)
@@ -207,6 +211,7 @@ def copySourceFiles(String buildFile, String srcPDS, String dependencyDatasetMap
 									.execute()
 						} else
 						{
+							println "**** Copying $memberName to $dependencyPDS"
 							new CopyToPDS().file(new File(physicalDependencyLoc))
 									.dataset(dependencyPDS)
 									.member(memberName)
@@ -494,6 +499,9 @@ def createLanguageDatasets(String lang) {
 
 	if (props."${lang}_cexecDatasets")
 		createDatasets(props."${lang}_cexecDatasets".split(','), props."${lang}_cexecOptions")
+
+	if (props."${lang}_printDatasets")
+		createDatasets(props."${lang}_printDatasets".split(','), props."${lang}_printOptions")
 }
 
 /*
