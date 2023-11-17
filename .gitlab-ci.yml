@@ -27,8 +27,11 @@ Push zAppBuild_for_IDZ:
     git clone -c http.sslVerify=false https://gitlab-ci-token:${GROUP_GITLAB_TOKEN}@mygit.aafes.com/${CI_PROJECT_NAMESPACE}/dbb-zappbuild.git || echo "If repo already exists, we will fetch, reset and pull"
     echo "Pushing zAppBuild project to /u/lpp/GIT/runner/zappbuild"
     cd $mdir/dbb-zappbuild 
+    echo "fetch"
     git fetch
+    echo "reset"
     git reset --hard origin/main
+    echo "pull"
     git pull https://gitlab-ci-token:${GROUP_GITLAB_TOKEN}@mygit.aafes.com/${CI_PROJECT_NAMESPACE}/dbb-zappbuild.git 
     cd $mdir/dbb-zappbuild
     git switch main
