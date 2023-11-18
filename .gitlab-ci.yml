@@ -16,7 +16,7 @@ Push zAppBuild:
 
 #This job will update the /u/lpp/GIT/runner/dbb-zappbuild used by iddz developers
 # It will run only if there is a commit to main branch via push or merge 
-Push zAppBuild_for_IDZ:
+.Push zAppBuild_for_IDZ:
   stage: Refresh
   script:
   - |
