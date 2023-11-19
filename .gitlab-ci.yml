@@ -16,25 +16,33 @@ Push zAppBuild:
 
 #This job will update the /u/lpp/GIT/runner/dbb-zappbuild used by iddz developers
 # It will run only if there is a commit to main branch via push or merge 
-.Push zAppBuild_for_IDZ:
+Push zAppBuild_for_IDZ:
   stage: Refresh
   script:
   - |
-    env
     mdir=/u/lpp/GIT/runner
     cd $mdir
     echo "clonning zappbuild"
-    git clone -c http.sslVerify=false https://gitlab-ci-token:${GROUP_GITLAB_TOKEN}@mygit.aafes.com/${CI_PROJECT_NAMESPACE}/dbb-zappbuild.git || echo "If repo already exists, we will fetch, reset and pull"
-    echo "Pushing zAppBuild project to /u/lpp/GIT/runner/zappbuild"
-    cd $mdir/dbb-zappbuild 
-    echo "fetch"
-    git fetch
-    echo "reset"
-    git reset --hard origin/main
+    cd dbb-zappbuild &>/dev/null && git status && export job=pull || export job=clone && echo "repo already exists, we will fetch, reset and pull"
+    if [[ $job = clone ]] ; then git clone https://gitlab-ci-token:${GROUP_GITLAB_TOKEN}@mygit.aafes.com/ibm-dbb-test/dbb-zappbuild.git ; cd dbb-zappbuild ; git switch main ; fi
+    if [[ $job = "pull" ]] ; then
+    git fetch origin main
+    git checkout --force -B main origin/main
+    git reset --hard
+    git clean -fdx  ;
+fi
+    #echo "clonning zappbuild"
+    #git clone -c http.sslVerify=false https://gitlab-ci-token:${GROUP_GITLAB_TOKEN}@mygit.aafes.com/${CI_PROJECT_NAMESPACE}/dbb-zappbuild.git || echo "If repo already exists, we will fetch, reset and pull"
+    #echo "Pushing zAppBuild project to /u/lpp/GIT/runner/zappbuild"
+    #cd $mdir/dbb-zappbuild 
+    #echo "fetch"
+    #git fetch
+    #echo "reset"
+    #git reset --hard origin/main
     #echo "pull"
     #git pull https://gitlab-ci-token:${GROUP_GITLAB_TOKEN}@mygit.aafes.com/${CI_PROJECT_NAMESPACE}/dbb-zappbuild.git 
-    cd $mdir/dbb-zappbuild
-    git switch main
+    #cd $mdir/dbb-zappbuild
+    #git switch main
   tags:
     - SD1H
   rules:
