@@ -20,7 +20,7 @@ Push zAppBuild_for_IDZ:
   stage: Refresh
   script:
   - |
-    mdir=/u/lpp/GIT/runner
+    mdir= /opt/git/runner
     cd $mdir
     echo "clonning zappbuild"
     cd dbb-zappbuild &>/dev/null && git status && export job=pull || export job=clone && echo "repo already exists, we will fetch, reset and pull"
