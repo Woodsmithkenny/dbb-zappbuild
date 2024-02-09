@@ -11,7 +11,7 @@ import groovy.xml.*
 @Field def buildUtils= loadScript(new File("${props.zAppBuildDir}/utilities/BuildUtilities.groovy"))
 @Field def impactUtils= loadScript(new File("${props.zAppBuildDir}/utilities/ImpactUtilities.groovy"))
 
-println("** Building files mapped to ${this.class.getName()}.groovy script")
+println("** Building ${argMap.buildList.size()} ${argMap.buildList.size() == 1 ? 'file' : 'files'} mapped to ${this.class.getName()}.groovy script")
 
 // verify required build properties
 buildUtils.assertBuildProperties(props.cobol_requiredBuildProperties)
@@ -19,11 +19,11 @@ buildUtils.assertBuildProperties(props.zunit_requiredBuildProperties)
 
 def langQualifier = "zunit"
 buildUtils.createLanguageDatasets(langQualifier)
-
+int currentBuildFileNumber = 1
 
 // iterate through build list
-(argMap.buildList).each { buildFile ->
-	println "*** Building file $buildFile"
+(argMap.buildList.sort()).each { buildFile ->
+	println "*** (${currentBuildFileNumber++}/${argMap.buildList.size()}) Building file $buildFile"
 
 	String member = CopyToPDS.createMemberName(buildFile)
 
@@ -171,42 +171,48 @@ zunitDebugParm = props.getFileProperty('zunit_userDebugSessionTestParm', buildFi
 	 *
 	 */
 
-	// Splitting the String into a StringArray using CC as the seperator
-	def jobRcStringArray = zUnitRunJCL.maxRC.split("CC")
+	// Evaluate if running in preview build mode
+	if (!props.preview) {
 
-	// This evals the number of items in the ARRAY! Dont get confused with the returnCode itself
-	if ( jobRcStringArray.length > 1 ){
-		// Ok, the string can be splitted because it contains the keyword CC : Splitting by CC the second record contains the actual RC
-		rc = zUnitRunJCL.maxRC.split("CC")[1].toInteger()
+		// Splitting the String into a StringArray using CC as the seperator
+		def jobRcStringArray = zUnitRunJCL.maxRC.split("CC")
 
-		// manage processing the RC, up to your logic. You might want to flag the build as failed.
-		if (rc <= props.zunit_maxPassRC.toInteger()){
-			println   "***  zUnit Test Job ${zUnitRunJCL.submittedJobId} completed with $rc "
-			// Store Report in Workspace
-			new CopyToHFS().dataset(props.zunit_bzureportPDS).member(member).file(reportLogFile).hfsEncoding(props.logEncoding).append(false).copy()
-			// printReport
-			printReport(reportLogFile)
-		} else if (rc <= props.zunit_maxWarnRC.toInteger()){
-			String warningMsg = "*! The zunit test returned a warning ($rc) for $buildFile"
-			// Store Report in Workspace
-			new CopyToHFS().dataset(props.zunit_bzureportPDS).member(member).file(reportLogFile).hfsEncoding(props.logEncoding).append(false).copy()
-			// print warning and report
-			println warningMsg
-			printReport(reportLogFile)
-			buildUtils.updateBuildResult(warningMsg:warningMsg,logs:["${member}_zunit.log":logFile])
-		} else { // rc > props.zunit_maxWarnRC.toInteger()
+		// This evals the number of items in the ARRAY! Dont get confused with the returnCode itself
+		if ( jobRcStringArray.length > 1 ){
+			// Ok, the string can be splitted because it contains the keyword CC : Splitting by CC the second record contains the actual RC
+			rc = zUnitRunJCL.maxRC.split("CC")[1].toInteger()
+
+			// manage processing the RC, up to your logic. You might want to flag the build as failed.
+			if (rc <= props.zunit_maxPassRC.toInteger()){
+				println   "***  zUnit Test Job ${zUnitRunJCL.submittedJobId} completed with $rc "
+				// Store Report in Workspace
+				new CopyToHFS().dataset(props.zunit_bzureportPDS).member(member).file(reportLogFile).hfsEncoding(props.logEncoding).append(false).copy()
+				// printReport
+				printReport(reportLogFile)
+			} else if (rc <= props.zunit_maxWarnRC.toInteger()){
+				String warningMsg = "*! The zunit test returned a warning ($rc) for $buildFile"
+				// Store Report in Workspace
+				new CopyToHFS().dataset(props.zunit_bzureportPDS).member(member).file(reportLogFile).hfsEncoding(props.logEncoding).append(false).copy()
+				// print warning and report
+				println warningMsg
+				printReport(reportLogFile)
+				buildUtils.updateBuildResult(warningMsg:warningMsg,logs:["${member}_zunit.log":logFile])
+			} else { // rc > props.zunit_maxWarnRC.toInteger()
+				props.error = "true"
+				String errorMsg = "*! The zunit test failed with RC=($rc) for $buildFile "
+				println(errorMsg)
+				buildUtils.updateBuildResult(errorMsg:errorMsg,logs:["${member}_zunit.log":logFile])
+			}
+		}
+		else {
+			// We don't see the CC, assume an exception
 			props.error = "true"
-			String errorMsg = "*! The zunit test failed with RC=($rc) for $buildFile "
+			String errorMsg = "*!  zUnit Test Job ${zUnitRunJCL.submittedJobId} failed with ${zUnitRunJCL.maxRC}"
 			println(errorMsg)
 			buildUtils.updateBuildResult(errorMsg:errorMsg,logs:["${member}_zunit.log":logFile])
 		}
-	}
-	else {
-		// We don't see the CC, assume an exception
-		props.error = "true"
-		String errorMsg = "*!  zUnit Test Job ${zUnitRunJCL.submittedJobId} failed with ${zUnitRunJCL.maxRC}"
-		println(errorMsg)
-		buildUtils.updateBuildResult(errorMsg:errorMsg,logs:["${member}_zunit.log":logFile])
+	} else { // skip evaluating Unit tests result
+		if (props.verbose) println "*** Evaluation of zUnit test result skipped, because running in preview mode."
 	}
 
 }

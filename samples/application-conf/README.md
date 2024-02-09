@@ -1,12 +1,12 @@
 # Application Configuration
 This folder contains application specific configuration properties used by the zAppBuild Groovy build and utility scripts. It is intended to be copied as a high level folder in the application repository or main application repository if the application source files are distributed across multiple repositories. Once copied to the application repository, users should review the default property files and modify any values as needed.
 
-At the beginning of the build, the `application-conf/application.properties` file will automatically be loaded into the [DBB BuildProperties class](https://www.ibm.com/support/knowledgecenter/SS6T76_1.0.4/scriptorg.html#build-properties-class). Use the `applicationPropFiles` property (see table below) to load additional application property files.
+At the beginning of the build, the `application.properties` file will automatically be searched and loaded if it exists into the [DBB BuildProperties class](https://www.ibm.com/docs/en/dbb/2.0?topic=apis-build-properties#build-properties-class). The `application.properties` file is by default searched in the `application-conf` folder of the application, but this can be configured through the `applicationConfDir` property in [build-conf/build.properties](../../build-conf/build.properties). Use the `applicationPropFiles` property (see table below) to load additional application property files.
 
-Properties can be overwritten on a per file basis through DBB Build Properties file properties. The tables below indicate which properties keys can be overwritten. It is recommended to manage these overwrites in file.properties.
+Properties can be overwritten on a per file basis through DBB Build Properties file properties. The tables below indicate which properties keys can be overwritten. It is recommended to manage these overwrites in `file.properties`.
 
 ## Property File Descriptions
-Since all properties will be loaded into a single static instance of BuildProperties, the organization and naming convention of the *property files* are somewhat arbitrary and targeted more for self documentation and understanding.
+Since all properties will be loaded into a single static instance of BuildProperties, the organization and naming convention of the *property files* are somewhat arbitrary and targeted more for self documentation and understanding. Properties related to a language script are prefixed with the name of the language script (i.e `cobol_compileParms`).
 
 ### application.properties
 This property file is loaded automatically at the beginning of the build and contains application specific properties used mainly by `build.groovy` but can also be a place to declare properties used by multiple language scripts. Additional property files are loaded based on the content of the `applicationPropFiles` property.
@@ -39,7 +39,7 @@ Location of file properties, script mappings and file-level property overrides. 
 Property | Description
 --- | ---
 dbb.scriptMapping | DBB configuration file properties association build files to language scripts
-dbb.scannerMapping | DBB scanner mapping to overwrite the file scanner. File property
+dbb.scannerMapping | zAppBuild configuration override/expansion to map files extensions to DBB dependency scanner configurations
 isSQL | File property overwrite to indicate that a file requires to include SQL parameters
 isCICS | File property overwrite to indicate that a file requires to include CICS parameters
 isMQ | File property overwrite to indicate that a file requires to include MQ parameters
@@ -67,11 +67,19 @@ Property | Description | Overridable
 assembler_fileBuildRank | Default Assemble program build rank. Used to sort Assembler build file sub-list. Leave empty. | true
 assembler_pgmParms | Default Assembler parameters. | true
 assembler_linkEditParms | Default parameters for the link edit step. | true
+assembler_debugParms | Assembler options when the debug flag is set. | true
 assembler_compileErrorPrefixParms | Default parameters to support remote error feedback in user build scenarios | true
+assembler_eqalangxParms | Default parameters for eqalangx utility to produce debug sidefile. | true
+assembler_db2precompilerParms | Default Assembler parameters for Db2 precompiler step. | true
+assembler_cicsprecompilerParms | Default Assembler parameters for CICS precompiler step. | true
+assembler_asmaOptFile | Optional ASMAOPT file - dataset(member). | true
 assembler_linkEdit | Flag indicating to execute the link edit step to produce a load module for the source file.  If false then a object deck will be created instead for later linking. | true
 assembler_linkEditStream | Optional linkEditStream defining additional link instructions via SYSIN dd | true
-assembler_maxRC | Default Assembler maximum RC allowed. | true
-assembler_linkEditMaxRC | Default link edit maximum RC allowed. | true
+assembler_maxSQLTranslatorRC | Default maximum return code for the sql translator step. | true
+assembler_maxCICSTranslatorRC | Default maximum return code for the cics translator step. | true
+assembler_maxRC | Default maximum return code for the Assembler step. | true
+assembler_maxIDILANGX_RC | Default maximum return code for the debug IDILANGX sidefile generation step. | true
+assembler_linkEditMaxRC | Default maximum return code for the linkEdit step. | true
 assembler_impactPropertyList | List of build properties causing programs to rebuild when changed | false
 assembler_impactPropertyListCICS | List of CICS build properties causing programs to rebuild when changed | false
 assembler_impactPropertyListSQL | List of SQL build properties causing programs to rebuild when changed | false
@@ -200,6 +208,7 @@ Property | Description | Overridable
 mfs_fileBuildRank | Default MFS program build rank. Used to sort MFS build file sub-list. Leave empty. | true
 mfs_phase1MaxRC | Default MFS Phase 1 maximum RC allowed. | true
 mfs_phase2MaxRC | Default MFS Phase 2 maximum RC allowed. | true
+mfs_phase2Execution | Flag if MFS Phase 2 process should be executed. Default: false | true
 mfs_phase1Parms | Default parameters for the phase 1 step. | true
 mfs_phase2Parms | Default parameters for the phase 2 step. | true
 mfs_impactPropertyList | List of build properties causing programs to rebuild when changed | false
@@ -259,6 +268,13 @@ zunit_CodeCoverageHost | Headless Code Coverage Collector host (if not specified
 zunit_CodeCoveragePort | Headless Code Coverage Collector port (if not specified IDz will be used for reporting) | true 
 zunit_CodeCoverageOptions | Headless Code Coverage Collector Options | true
 
+### CRB.properties
+Application properties used by zAppBuild/language/CRB.groovy
+
+Property | Description | Overridable
+--- | --- | ---
+crb_maxRC | CICS Resource Builder maximum acceptable return code (default is 4 if not specified) | true
+
 ### REXX.properties
 Application properties used by zAppBuild/language/REXX.groovy
 
@@ -276,12 +292,13 @@ rexx_cexec_deployType | default deployType CEXEC | true
 rexx_compileSyslibConcatenation | A comma-separated list of libraries to be concatenated in syslib during compile step | true
 rexx_linkEditSyslibConcatenation | A comma-separated list of libraries to be concatenated in syslib during linkEdit step | true
 
-### nonBuildable.properties
+### Transfer.properties
 Application properties used by zAppBuild/language/Transfer.groovy
 
 Property | Description | Overridable
 --- | --- | ---
 transfer_deployType | deployType | true
+transfer_copyMode | Copy mode used during the copy to the target data set | true
 
 ### languageConfigurationMapping.properties
 Sample language configuration mapping properties used by dbb-zappbuild/utilities/BuildUtilities.groovy.
