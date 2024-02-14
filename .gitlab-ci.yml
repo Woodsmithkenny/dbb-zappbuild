@@ -5,6 +5,8 @@ Push zAppBuild:
   stage: Dependencies
   script:
   - |
+    echo "debug"
+    pwd
     echo "Push zAppBuild project to USS"
   tags:
     - SD1H
