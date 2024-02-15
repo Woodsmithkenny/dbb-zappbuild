@@ -98,7 +98,7 @@ def populateDependencyScannerRegistry() {
 						}
 
 						// adding scanner mapping
-						// if (props.verbose) println("*** Adding scanner mapping for file extension $fileExt : (languageHint: $languageHint, Scanner Class: $scannerClass)")
+						if (props.verbose) println("*** Adding scanner mapping for file extension $fileExt : (languageHint: $languageHint, Scanner Class: $scannerClass)")
 						DependencyScannerRegistry.addScanner(fileExt, scanner)
 					}
 				}
