@@ -65,7 +65,7 @@ def getCurrentGitDetachedBranch(String gitDir) {
 	String cmd = "git -C $gitDir show -s --pretty=%D HEAD"
 	StringBuffer gitBranch = new StringBuffer()
 	StringBuffer gitError = new StringBuffer()
-	println("**** git cmd: $cmd")
+	println("*! git cmd: $cmd")
 
 	Process process = cmd.execute();
 	process.waitForProcessOutput(gitBranch, gitError)
