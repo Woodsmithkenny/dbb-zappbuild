@@ -354,9 +354,16 @@ def createLinkEditCommand(String buildFile, LogicalFile logicalFile, String memb
 	if(isZUnitTestCase){
 		linkedit.dd(new DDStatement().name("SYSLMOD").dsn("${props.cobol_testcase_loadPDS}($member)").options('shr').output(true).deployType('ZUNIT-TESTCASE'))
 	}
-	else {
-		linkedit.dd(new DDStatement().name("SYSLMOD").dsn("${props.cobol_loadPDS}($member)").options('shr').output(true).deployType(deployType))
+	else if (buildUtils.isSQL(logicalFile)) {
+		linkedit.dd(new DDStatement().name("SYSLMOD").dsn("${props.cobol_loadDBRM}($member)").options('shr').output(true).deployType(deployType))
 	}
+	else if (buildUtils.isCICS(logicalFile)) {
+		linkedit.dd(new DDStatement().name("SYSLMOD").dsn("${props.cobol_loadCICS}($member)").options('shr').output(true).deployType(deployType))
+	}
+	else if (buildUtils.isDLI(logicalFile)) {
+		linkedit.dd(new DDStatement().name("SYSLMOD").dsn("${props.cobol_loadIMS}($member)").options('shr').output(true).deployType(deployType))
+	}
+	
 	linkedit.dd(new DDStatement().name("SYSPRINT").options(props.cobol_printTempOptions))
 	linkedit.dd(new DDStatement().name("SYSUT1").options(props.cobol_tempOptions))
 
