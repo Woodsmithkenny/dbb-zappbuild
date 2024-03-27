@@ -478,23 +478,28 @@ def scanOnlyStaticDependencies(List buildList){
 				String isLinkEdited = props.getFileProperty("${langPrefix}_linkEdit", buildFile)
 
 				def scanner = dependencyScannerUtils.getScanner(buildFile)
-				LogicalFile logicalFile = scanner.scan(buildFile, props.workspace)
-
-				String member = CopyToPDS.createMemberName(buildFile)
-				String loadPDSMember = props."${langPrefix}_loadPDS"+"($member)"
-
-				if ((isLinkEdited && isLinkEdited.toBoolean()) || scriptMapping == "LinkEdit.groovy"){
-					try{
-						if (props.verbose) println ("*** Scanning load module $loadPDSMember of $buildFile")
-						saveStaticLinkDependencies(buildFile, props."${langPrefix}_loadPDS", logicalFile)
+				
+				if (sanner != null) {
+					LogicalFile logicalFile = scanner.scan(buildFile, props.workspace)
+	
+					String member = CopyToPDS.createMemberName(buildFile)
+					String loadPDSMember = props."${langPrefix}_loadPDS"+"($member)"
+	
+					if ((isLinkEdited && isLinkEdited.toBoolean()) || scriptMapping == "LinkEdit.groovy"){
+						try{
+							if (props.verbose) println ("*** Scanning load module $loadPDSMember of $buildFile")
+							saveStaticLinkDependencies(buildFile, props."${langPrefix}_loadPDS", logicalFile)
+						}
+						catch (com.ibm.dbb.build.ValidationException e){
+							println ("!* Error scanning output file for $buildFile  : $loadPDSMember")
+							println e
+						}
 					}
-					catch (com.ibm.dbb.build.ValidationException e){
-						println ("!* Error scanning output file for $buildFile  : $loadPDSMember")
-						println e
+					else {
+						if (props.verbose) println ("*** Skipped scanning module $loadPDSMember of $buildFile.")
 					}
-				}
-				else {
-					if (props.verbose) println ("*** Skipped scanning module $loadPDSMember of $buildFile.")
+				} else {
+					if (props.verbose) println ("*** Skipped scanning outputs of $buildFile. No scanner mapping found.")
 				}
 			} else {
 				if (props.verbose) println ("*** Skipped scanning outputs of $buildFile. No language prefix found.")
