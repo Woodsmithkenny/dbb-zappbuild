@@ -479,7 +479,7 @@ def scanOnlyStaticDependencies(List buildList){
 
 				def scanner = dependencyScannerUtils.getScanner(buildFile)
 				
-				if (sanner != null) {
+				if (scanner != null) {
 					LogicalFile logicalFile = scanner.scan(buildFile, props.workspace)
 	
 					String member = CopyToPDS.createMemberName(buildFile)
