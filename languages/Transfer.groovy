@@ -68,6 +68,7 @@ buildList.each { buildFile ->
 		PropertyMappings dsMapping = new PropertyMappings("transfer_datasetMapping")
 		PropertyMappings dsOptionsMapping = new PropertyMappings("transfer_dsOptions")
 
+		if (props.verbose) println "$dsMapping"
 		// obtain the target dataset based on the mapped dataset key
 		mappedDatesetDef = dsMapping.getValue(buildFile)
 		if (props.verbose) println "Mapped Dataset for $buildFile: $mappedDatesetDef"
