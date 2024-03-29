@@ -70,7 +70,7 @@ buildList.each { buildFile ->
 
 		// obtain the target dataset based on the mapped dataset key
 		mappedDatesetDef = dsMapping.getValue(buildFile)
-		if (props.verbose) println "Mapped Dataset for $buildFile: $mappDatasetDef"
+		if (props.verbose) println "Mapped Dataset for $buildFile: $mappedDatesetDef"
 		String targetDataset = props.getProperty(mappedDatesetDef)
 		
 		if (targetDataset != null) {
