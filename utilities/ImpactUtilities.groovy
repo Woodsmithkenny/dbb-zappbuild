@@ -419,6 +419,7 @@ def calculateChangedFiles(BuildResult lastBuildResult, boolean calculateConcurre
 
 		if (props.verbose) println "*** Changed files for directory $dir $msg:"
 		changed.each { file ->
+			if (props.verbose) println "**** Checking $file"
 			(file, mode) = fixGitDiffPath(file, dir, true, null)
 			if ( file != null ) {
 				if ( !buildUtils.matches(file, excludeMatchers)) {
