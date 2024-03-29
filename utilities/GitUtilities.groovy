@@ -284,6 +284,7 @@ def getChangedFiles(String cmd) {
 	def deletedFiles = []
 	def renamedFiles = []
 
+	if (props.verbose) println "*** Getting changed files cmd: $cmd"
 	def process = cmd.execute()
 	process.waitForProcessOutput(git_diff, git_error)
 
@@ -297,6 +298,7 @@ def getChangedFiles(String cmd) {
 
 	for (line in git_diff.toString().split("\n")) {
 		// process files from git diff
+		if (props.verbose) println "**** Git respone line: $line"
 		try {
 			gitDiffOutput = line.split()
 			action = gitDiffOutput[0]
