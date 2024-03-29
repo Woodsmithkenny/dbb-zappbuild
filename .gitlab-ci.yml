@@ -22,6 +22,7 @@ Push zAppBuild_for_IDZ:
   stage: Refresh
   script:
   - |
+    set -x
     export mdir="/opt/git/runner"
     cd $mdir
     echo "clonning zappbuild"
