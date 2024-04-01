@@ -70,6 +70,10 @@ def createImpactBuildList() {
 					buildSet.add(changedFile)
 					if (props.verbose) println "** Found build script mapping for $changedFile. Adding to build list"
 				}
+			} else {
+				if (props.verbose) {
+					println "**!!! No scipt mapping for $changedFile"
+				}
 			}
 
 			// check if impact calculation should be performed, default true
