@@ -574,6 +574,7 @@ def updateCollection(changedFiles, deletedFiles, renamedFiles) {
 				def logicalFile
 				if (scanner != null) {
 					if (props.verbose) println "*** Scanning file $file (${props.workspace}/${file} with ${scanner.getClass()})"
+					if (props.verbose) println "*** Scanner.getLanguageHint = ${scanner.getLanguageHint()}"
 					logicalFile = scanner.scan(file, props.workspace)
 				} else {
 					// The below logic should be replaced with Registration Scanner when available
