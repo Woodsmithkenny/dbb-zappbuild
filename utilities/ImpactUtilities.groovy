@@ -70,6 +70,10 @@ def createImpactBuildList() {
 					buildSet.add(changedFile)
 					if (props.verbose) println "** Found build script mapping for $changedFile. Adding to build list"
 				}
+			} else {
+				if (props.verbose) {
+					println "**!!! No scipt mapping for $changedFile"
+				}
 			}
 
 			// check if impact calculation should be performed, default true
@@ -281,6 +285,9 @@ def calculateChangedFiles(BuildResult lastBuildResult) {
  */
 
 def calculateChangedFiles(BuildResult lastBuildResult, boolean calculateConcurrentChanges, String gitReference) {
+	if (props.verbose) {
+		println "** Calculating changed files for $gitReference"
+	}
 	String msg = ""
 	if (calculateConcurrentChanges.toBoolean()) {
 		msg = "in configuration $gitReference"
@@ -360,6 +367,10 @@ def calculateChangedFiles(BuildResult lastBuildResult, boolean calculateConcurre
 
 			if (props.verbose) println "** Storing $relDir : $hash"
 			baselineHashes.put(relDir,hash)
+		}
+	} else {
+		if (props.verbose) {
+			println "!** No previous build result found."
 		}
 	}
 
