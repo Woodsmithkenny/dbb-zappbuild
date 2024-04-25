@@ -104,9 +104,11 @@ def createCompileCommand(String buildFile, String member, File logFile) {
 		compile.dd(new DDStatement().name("SYSUT$num").options(props.bms_tempOptions))
 	}
 	compile.dd(new DDStatement().name("SYSLIB").dsn(props.SDFHMAC).options("shr"))
-	compile.dd(new DDStatement().dsn(props.MACLIB).options("shr"))
+	compile.dd(new DDStatement().dsn(props.assembler_macroPDS).options("shr"))
+	//TODO: Add the dependency for the macro folder in the same project.
+	//compile.dd(new DDStatement().dsn().options("shr"))
 	compile.dd(new DDStatement().name("TASKLIB").dsn(props.SASMMOD1).options("shr"))
-		
+			
 	compile.copy(new CopyToHFS().ddName("SYSPRINT").file(logFile).hfsEncoding(props.logEncoding).append(true))
 	
 	return compile
