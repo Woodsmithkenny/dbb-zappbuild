@@ -3,6 +3,7 @@ import com.ibm.dbb.metadata.*
 import com.ibm.dbb.dependency.*
 import com.ibm.dbb.build.*
 import groovy.transform.*
+import com.ibm.jzos.ZFile
 
 
 // define script properties
