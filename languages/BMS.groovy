@@ -109,7 +109,7 @@ def createCompileCommand(String buildFile, String member, File logFile) {
 	compile.dd(new DDStatement().dsn(props.assembler_macroPDS).options("shr"))
 	//TODO: Add the dependency for the macro folder in the same project.
 	if (props.bms_macroPDS && ZFile.dsExists("'${props.bms_macroPDS}'"))
-		compile.dd(new DDStatement().dsn(props.bms_macroPDS.options("shr"))
+		compile.dd(new DDStatement().dsn(props.bms_macroPDS).options("shr"))
 	compile.dd(new DDStatement().name("TASKLIB").dsn(props.SASMMOD1).options("shr"))
 			
 	compile.copy(new CopyToHFS().ddName("SYSPRINT").file(logFile).hfsEncoding(props.logEncoding).append(true))
