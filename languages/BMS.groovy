@@ -79,6 +79,8 @@ def createCopyGenCommand(String buildFile, String member, File logFile) {
 	}
 	compile.dd(new DDStatement().name("SYSLIB").dsn(props.SDFHMAC).options("shr"))
 	compile.dd(new DDStatement().dsn(props.MACLIB).options("shr"))
+	if (props.bms_macroPDS && ZFile.dsExists("'${props.bms_macroPDS}'"))
+		compile.dd(new DDStatement().dsn(props.bms_macroPDS.options("shr"))
 	compile.dd(new DDStatement().name("TASKLIB").dsn(props.SASMMOD1).options("shr"))
 		
 	// add a copy command to the compile command to copy the SYSPRINT from the temporary dataset to an HFS log file
@@ -106,7 +108,8 @@ def createCompileCommand(String buildFile, String member, File logFile) {
 	compile.dd(new DDStatement().name("SYSLIB").dsn(props.SDFHMAC).options("shr"))
 	compile.dd(new DDStatement().dsn(props.assembler_macroPDS).options("shr"))
 	//TODO: Add the dependency for the macro folder in the same project.
-	//compile.dd(new DDStatement().dsn().options("shr"))
+	if (props.bms_macroPDS && ZFile.dsExists("'${props.bms_macroPDS}'"))
+		compile.dd(new DDStatement().dsn(props.bms_macroPDS.options("shr"))
 	compile.dd(new DDStatement().name("TASKLIB").dsn(props.SASMMOD1).options("shr"))
 			
 	compile.copy(new CopyToHFS().ddName("SYSPRINT").file(logFile).hfsEncoding(props.logEncoding).append(true))
