@@ -25,9 +25,19 @@ int currentBuildFileNumber = 1
 sortedList.each { buildFile ->
 	println "*** (${currentBuildFileNumber++}/${sortedList.size()}) Building file $buildFile"
 	
-	// copy build file to input data set
-	buildUtils.copySourceFiles(buildFile, props.bms_srcPDS, null, null, null)
+	// **** Added below to account for macro dependencies ****
+	// configure dependency resolution and create logical file	
+	String dependencySearch = props.getFileProperty('assembler_dependencySearch', buildFile)
+	SearchPathDependencyResolver dependencyResolver = new SearchPathDependencyResolver(dependencySearch)
 	
+	// copy build file to input data set
+	buildUtils.copySourceFiles(buildFile, props.bms_srcPDS, 'assembler_dependenciesDatasetMapping', null ,dependencyResolver)
+	// Create logical file
+	LogicalFile logicalFile = buildUtils.createLogicalFile(dependencyResolver, buildFile)
+
+	// print logicalFile details and overrides
+	if (props.verbose) buildUtils.printLogicalFileAttributes(logicalFile)
+		
 	// create mvs commands
 	String member = CopyToPDS.createMemberName(buildFile)
 	File logFile = new File( props.userBuild ? "${props.buildOutDir}/${member}.log" : "${props.buildOutDir}/${member}.bms.log")
