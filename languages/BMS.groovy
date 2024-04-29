@@ -31,7 +31,7 @@ sortedList.each { buildFile ->
 	SearchPathDependencyResolver dependencyResolver = new SearchPathDependencyResolver(dependencySearch)
 	
 	// copy build file to input data set
-	buildUtils.copySourceFiles(buildFile, props.bms_srcPDS, 'assembler_dependenciesDatasetMapping', null ,dependencyResolver)
+	buildUtils.copySourceFiles(buildFile, props.bms_srcPDS, 'bms_dependenciesDatasetMapping', null ,dependencyResolver)
 	// Create logical file
 	LogicalFile logicalFile = buildUtils.createLogicalFile(dependencyResolver, buildFile)
 
