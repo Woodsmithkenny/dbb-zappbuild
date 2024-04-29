@@ -27,7 +27,7 @@ Push zAppBuild_for_IDZ:
     cd $mdir
     echo "clonning zappbuild"
     cd dbb-zappbuild &>/dev/null && git status && export job=pull || export job=clone && echo "repo already exists, we will fetch, reset and pull"
-    if [[ $job = clone ]] ; then git clone https://gitlab-ci-token:${GROUP_GITLAB_TOKEN}@mygit.aafes.com/ibm-dbb-test/dbb-zappbuild.git ; cd dbb-zappbuild ; git switch main ; fi
+    if [[ $job = clone ]] ; then git clone https://gitlab-ci-token:${GROUP_GITLAB_TOKEN}@mygit.aafes.com/vision/dbb-zappbuild.git ; cd dbb-zappbuild ; git switch main ; fi
     if [[ $job = "pull" ]] ; then
     git fetch origin main
     git checkout --force -B main origin/main
